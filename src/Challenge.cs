@@ -2,22 +2,19 @@
 // PROBLEMA: Uma empresa precisa processar pedidos de reembolso com diferentes níveis de aprovação
 // baseados no valor. O código atual usa condicionais gigantes e está difícil de manter
 // quando novos níveis de aprovação são adicionados
-
-using System;
-
 namespace DesignPatternChallenge
 {
     // Contexto: Sistema de RH que processa reembolsos de despesas
     // Cada nível gerencial tem limite de aprovação diferente
-    
-    public class ExpenseRequest
+
+    public class ExpenseRequest1
     {
         public string EmployeeName { get; set; }
         public decimal Amount { get; set; }
         public string Purpose { get; set; }
         public string Department { get; set; }
 
-        public ExpenseRequest(string employeeName, decimal amount, string purpose, string department)
+        public ExpenseRequest1(string employeeName, decimal amount, string purpose, string department)
         {
             EmployeeName = employeeName;
             Amount = amount;
@@ -29,7 +26,7 @@ namespace DesignPatternChallenge
     // Problema: Classe monolítica com lógica condicional complexa
     public class ExpenseApprovalSystem
     {
-        public void ProcessExpense(ExpenseRequest request)
+        public void ProcessExpense(ExpenseRequest1 request)
         {
             Console.WriteLine($"\n=== Processando Despesa ===");
             Console.WriteLine($"Funcionário: {request.EmployeeName}");
@@ -42,7 +39,7 @@ namespace DesignPatternChallenge
             {
                 // Supervisor pode aprovar
                 Console.WriteLine("[Supervisor] Analisando pedido...");
-                
+
                 if (ValidateReceipt(request) && CheckBudget(request.Department, request.Amount))
                 {
                     Console.WriteLine($"✅ [Supervisor] Despesa de R$ {request.Amount:N2} APROVADA");
@@ -58,8 +55,8 @@ namespace DesignPatternChallenge
                 // Gerente pode aprovar
                 Console.WriteLine("[Supervisor] Valor acima do meu limite, encaminhando...");
                 Console.WriteLine("[Gerente] Analisando pedido...");
-                
-                if (ValidateReceipt(request) && CheckBudget(request.Department, request.Amount) && 
+
+                if (ValidateReceipt(request) && CheckBudget(request.Department, request.Amount) &&
                     CheckPolicy(request))
                 {
                     Console.WriteLine($"✅ [Gerente] Despesa de R$ {request.Amount:N2} APROVADA");
@@ -76,8 +73,8 @@ namespace DesignPatternChallenge
                 Console.WriteLine("[Supervisor] Valor acima do meu limite, encaminhando...");
                 Console.WriteLine("[Gerente] Valor acima do meu limite, encaminhando...");
                 Console.WriteLine("[Diretor] Analisando pedido...");
-                
-                if (ValidateReceipt(request) && CheckBudget(request.Department, request.Amount) && 
+
+                if (ValidateReceipt(request) && CheckBudget(request.Department, request.Amount) &&
                     CheckPolicy(request) && CheckStrategicAlignment(request))
                 {
                     Console.WriteLine($"✅ [Diretor] Despesa de R$ {request.Amount:N2} APROVADA");
@@ -95,8 +92,8 @@ namespace DesignPatternChallenge
                 Console.WriteLine("[Gerente] Valor acima do meu limite, encaminhando...");
                 Console.WriteLine("[Diretor] Valor acima do meu limite, encaminhando...");
                 Console.WriteLine("[CEO] Analisando pedido...");
-                
-                if (ValidateReceipt(request) && CheckBudget(request.Department, request.Amount) && 
+
+                if (ValidateReceipt(request) && CheckBudget(request.Department, request.Amount) &&
                     CheckPolicy(request) && CheckStrategicAlignment(request) && CheckBoardApproval(request))
                 {
                     Console.WriteLine($"✅ [CEO] Despesa de R$ {request.Amount:N2} APROVADA");
@@ -113,7 +110,7 @@ namespace DesignPatternChallenge
             // Problema 4: Não é fácil mudar a ordem ou pular níveis
         }
 
-        private bool ValidateReceipt(ExpenseRequest request)
+        private bool ValidateReceipt(ExpenseRequest1 request)
         {
             Console.WriteLine("  → Validando nota fiscal...");
             return true; // Simulação
@@ -125,25 +122,25 @@ namespace DesignPatternChallenge
             return true; // Simulação
         }
 
-        private bool CheckPolicy(ExpenseRequest request)
+        private bool CheckPolicy(ExpenseRequest1 request)
         {
             Console.WriteLine("  → Verificando conformidade com política...");
             return true; // Simulação
         }
 
-        private bool CheckStrategicAlignment(ExpenseRequest request)
+        private bool CheckStrategicAlignment(ExpenseRequest1 request)
         {
             Console.WriteLine("  → Verificando alinhamento estratégico...");
             return true; // Simulação
         }
 
-        private bool CheckBoardApproval(ExpenseRequest request)
+        private bool CheckBoardApproval(ExpenseRequest1 request)
         {
             Console.WriteLine("  → Verificando aprovação do conselho...");
             return true; // Simulação
         }
 
-        private void RegisterApproval(string approver, ExpenseRequest request)
+        private void RegisterApproval(string approver, ExpenseRequest1 request)
         {
             Console.WriteLine($"  → Registrando aprovação por {approver}...");
         }
@@ -152,10 +149,10 @@ namespace DesignPatternChallenge
     // Alternativa problemática: Switch case
     public class ExpenseApprovalSystemV2
     {
-        public void ProcessExpense(ExpenseRequest request)
+        public void ProcessExpense(ExpenseRequest1 request)
         {
             var approvalLevel = DetermineApprovalLevel(request.Amount);
-            
+
             // Problema: Ainda requer modificação para adicionar novos níveis
             switch (approvalLevel)
             {
@@ -188,10 +185,10 @@ namespace DesignPatternChallenge
             return "CEO";
         }
 
-        private void ProcessBySupervisor(ExpenseRequest request) { }
-        private void ProcessByManager(ExpenseRequest request) { }
-        private void ProcessByDirector(ExpenseRequest request) { }
-        private void ProcessByCEO(ExpenseRequest request) { }
+        private void ProcessBySupervisor(ExpenseRequest1 request) { }
+        private void ProcessByManager(ExpenseRequest1 request) { }
+        private void ProcessByDirector(ExpenseRequest1 request) { }
+        private void ProcessByCEO(ExpenseRequest1 request) { }
     }
 
     class Program
@@ -203,16 +200,16 @@ namespace DesignPatternChallenge
             var system = new ExpenseApprovalSystem();
 
             // Teste com diferentes valores
-            var expense1 = new ExpenseRequest("João Silva", 50.00m, "Material de escritório", "TI");
+            var expense1 = new ExpenseRequest1("João Silva", 50.00m, "Material de escritório", "TI");
             system.ProcessExpense(expense1);
 
-            var expense2 = new ExpenseRequest("Maria Santos", 350.00m, "Curso de capacitação", "RH");
+            var expense2 = new ExpenseRequest1("Maria Santos", 350.00m, "Curso de capacitação", "RH");
             system.ProcessExpense(expense2);
 
-            var expense3 = new ExpenseRequest("Pedro Oliveira", 2500.00m, "Notebook", "TI");
+            var expense3 = new ExpenseRequest1("Pedro Oliveira", 2500.00m, "Notebook", "TI");
             system.ProcessExpense(expense3);
 
-            var expense4 = new ExpenseRequest("Ana Costa", 15000.00m, "Servidor para datacenter", "TI");
+            var expense4 = new ExpenseRequest1("Ana Costa", 15000.00m, "Servidor para datacenter", "TI");
             system.ProcessExpense(expense4);
 
             Console.WriteLine("\n=== PROBLEMAS ===");
